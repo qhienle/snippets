@@ -9,6 +9,7 @@ USAGE: foo.py --help # And the rest is handled by `argparse`
 
 import os
 import argparse
+import logging
 
 __version__ = "0.1"
 
@@ -31,7 +32,25 @@ def parse_args():
     parser.add_argument('arg', help="Mandatory argument [REQUIRED]")
     parser.add_argument('-o', '--optional', help="Optional argument")
     parser.add_argument('-f', '--flag', action="store_true", help="Optional flag")
-    return(parser.parse_args())
+    parser.add_argument('--logging-level', '-l', dest='level', default='info',
+                        help="Logging level (str), can be 'debug', 'info', 'warning'. Default='info'")
+    return parser.parse_args()
+
+
+def configure_logging(level):
+    """
+    Set logging level, based on the level names of the `logging` module.
+    - level (str): 'debug', 'info' or 'warning'
+    """
+    if level == 'debug':
+        level_name = logging.DEBUG
+    elif level == 'info':
+        level_name = logging.INFO
+    else:
+        level_name = logging.WARNING
+    logging.basicConfig(level=level_name, 
+                        format='[%(asctime)s] %(levelname)s: %(message)s', 
+                        datefmt='%Y-%m-%d@%H:%M:%S')
 
 
 def _test(arg, opt="."):
@@ -41,10 +60,17 @@ def _test(arg, opt="."):
     - returns:
     """
     print(f"Required command-line argument is: {arg}")
-    return(os.stat(opt))
+    return os.stat(opt)
 
+
+def main(args):
+    """
+    Main function
+    """
+    return args
 
 if __name__ == '__main__':
     args = parse_args()
+    main(args)
     _test(args.arg)
     print("\nDone.\n")
