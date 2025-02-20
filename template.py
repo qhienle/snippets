@@ -7,6 +7,7 @@ Template for Python developments.
 USAGE: foo.py --help # And the rest is handled by `argparse`
 """
 
+import sys
 import os
 import argparse
 import logging
@@ -60,17 +61,18 @@ def _test(arg, opt="."):
     - returns:
     """
     print(f"Required command-line argument is: {arg}")
-    return os.stat(opt)
+    print(os.stat(opt))
+    print("\nDone.\n")
 
 
 def main(args):
     """
     Main function
     """
-    return args
+    args = parse_args()
+    configure_logging(args.level)
+    _test(args)
+
 
 if __name__ == '__main__':
-    args = parse_args()
-    main(args)
-    _test(args.arg)
-    print("\nDone.\n")
+    sys.exit(main())
