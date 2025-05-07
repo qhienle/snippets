@@ -1,4 +1,5 @@
 # Script to send "shift" key stroke at interval
+# USAGE: .\Send-SHIFT.ps1
 
 # Add the necessary assembly
 Add-Type -AssemblyName System.Windows.Forms
