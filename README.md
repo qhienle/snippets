@@ -76,9 +76,15 @@ Exit the virtual environment:
 
 Select rows where column contains _pattern_ `df['colname'].str.contains('pattern')`
 
-### IPython/Jupyter
+### IPython/Jupyter Notebook on spxp-app02.
 
-`jupyter-lab --ip=10.128.80.26 --no-browser`
+```bash
+ssh -L 8080:localhost:8080 ${USER}@spxp-app02
+screen -S dev # Protect jupyter server from hangups
+conda activate CQGC-utils
+jupyter lab --no-browser --port 8080 --notebook-dir ~/bin
+# Paste URL from STDOUT into localhost browser
+```
 
 Save variables and sessions with _magic_
 `%store var`/`%store -r var`, `%history` or `notebook` 
