@@ -86,7 +86,7 @@ Save variables and sessions with _magic_
 
 ## Git/GitHub
 
-to get Git-Bash working on a Windows 10 administered by IT and not connected on a work network. $HOEM is not set and $HOMEDRIVE is set to a network drive. Either delete the network drive `net use U: /delete` or
+to get Git-Bash working on a Windows 10 administered by IT and not connected on a work network. $HOME is not set and $HOMEDRIVE is set to a network drive. Either delete the network drive `net use U: /delete` or
 
 ```cmd
 # OK for git-bash, but not for VSCode
