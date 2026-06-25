@@ -18,16 +18,6 @@ import requests
 
 __version__ = "0.1"
 
-# class Mermaid:
-#     """
-#     Mermaid class
-#     """
-#     def __init__(self):
-#         """
-#         Initialize Class
-#         """
-#         pass
-
 
 def parse_args():
     """
@@ -57,7 +47,7 @@ def configure_logging(level):
                         datefmt='%Y-%m-%d@%H:%M:%S')
 
 
-def mmd2img(mmd:str, output_file) -> 0:
+def mmd2img(mmd:str, output_file:str) -> 0:
     """
     Exports Mermaid diagram code to PNG
     - `mmd`  : Mermaid code. Ex.: "flowchart TD
@@ -67,10 +57,12 @@ def mmd2img(mmd:str, output_file) -> 0:
     logging.debug(f"Encode code to convert {mmd}")
     encoded = base64.urlsafe_b64encode(mmd.encode()).decode()
     url = f"https://mermaid.ink/img/{encoded}"
-    img_data = requests.get(url).content
+    response = requests.get(url)
+    if response.status_code != 200:
+        return response.status_code
     with open(output_file, "wb") as f:
-        f.write(img_data)
-    logging.debug(f"Wrote file {output_file}")
+        f.write(response.content)
+    logging.debug(f"Wrote to {output_file} the content: {response.content}")
     return 0
 
 
