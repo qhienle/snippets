@@ -2,25 +2,33 @@
 """
 Convert [Mermaid code](https://mermaid.ai/open-source/intro/) to an image file (PNG).
 
-USAGE: mmd2img.py --help
+USAGE:  python mmd2img.py --help
+        python mmd2img.py < diagram.mmd
+        python mmd2img.py << 'EOF'
+        flowchart LR
+            A(["Sequence"]) --> |"BCL"| B["BCL-Convert<br/>(local)"]
+            ...
+        EOF
+        echo '...' | python mmd2img.py
 """
 
 import sys
-import os
 import argparse
 import logging
+import base64
+import requests
 
 __version__ = "0.1"
 
-class Mermaid:
-    """
-    Mermaid class
-    """
-    def __init__(self):
-        """
-        Initialize Class
-        """
-        pass
+# class Mermaid:
+#     """
+#     Mermaid class
+#     """
+#     def __init__(self):
+#         """
+#         Initialize Class
+#         """
+#         pass
 
 
 def parse_args():
@@ -28,9 +36,9 @@ def parse_args():
     Parse command-line options
     """
     parser = argparse.ArgumentParser(description="Convert Mermaid diagrams to image files (PNG)")
-    parser.add_argument('mmd', help="Mermaid code [REQUIRED]")
-    parser.add_argument('-o', '--optional', help="Optional argument")
-    parser.add_argument('-f', '--flag', action="store_true", help="Optional flag")
+    parser.add_argument('mmd', nargs='?', default='-', help="Mermaid code or '-' for stdin")
+    # parser.add_argument('-o', '--optional', help="Optional argument")
+    # parser.add_argument('-f', '--flag', action="store_true", help="Optional flag")
     parser.add_argument('--logging-level', '-l', dest='level', default='info',
                         help="Logging level (str), can be 'debug', 'info', 'warning'. Default='info'")
     return parser.parse_args()
@@ -52,14 +60,28 @@ def configure_logging(level):
                         datefmt='%Y-%m-%d@%H:%M:%S')
 
 
+def mmd2img(mmd):
+    """
+    Exports Mermaid diagram code to PNG
+    """
+    encoded = base64.urlsafe_b64encode(mmd.encode()).decode()
+    url = f"https://mermaid.ink/img/{encoded}"
+    img_data = requests.get(url).content
+    with open("mmd.png", "wb") as f:
+        f.write(img_data)
+
+
 def main(args):
     """
     Main function
     """
-    args = parse_args()
-    configure_logging(args.level)
-    _test(args)
+    mmd = sys.stdin.read() if args.mmd == '-' else args.mmd
+    mmd2img(mmd)
+    print("Done.")
+    return 0
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    args = parse_args()
+    configure_logging(args.level)
+    sys.exit(main(args))
