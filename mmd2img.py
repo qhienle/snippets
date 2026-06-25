@@ -6,8 +6,7 @@ USAGE:  python mmd2img.py --help
         echo '...' | python mmd2img.py
         python mmd2img.py << 'EOF'
         flowchart LR
-            A(["Sequence"]) --> |"BCL"| B["BCL-Convert<br/>(local)"]
-            ...
+            A(["start"]) --> |"do stuf (...)"| B["end"]
         EOF
 """
 
@@ -36,8 +35,7 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description="Convert Mermaid diagrams to image files (PNG)")
     parser.add_argument('code', nargs='?', default='-', help="Mermaid code or '-' for STDIN")
-    # parser.add_argument('-o', '--optional', help="Optional argument")
-    # parser.add_argument('-f', '--flag', action="store_true", help="Optional flag")
+    parser.add_argument('--output-file', '-o', dest='output_file', default='mmd.png', help="Optional argument")
     parser.add_argument('--logging-level', '-l', dest='level', default='info',
                         help="Logging level (str), can be 'debug', 'info', 'warning'. Default='info'")
     return parser.parse_args()
@@ -59,7 +57,7 @@ def configure_logging(level):
                         datefmt='%Y-%m-%d@%H:%M:%S')
 
 
-def mmd2img(mmd:str, output_file='mmd.png') -> 0:
+def mmd2img(mmd:str, output_file) -> 0:
     """
     Exports Mermaid diagram code to PNG
     - `mmd`  : Mermaid code. Ex.: "flowchart TD
@@ -81,7 +79,7 @@ def main(args):
     Main function
     """
     mmd = sys.stdin.read() if args.code == '-' else args.code
-    mmd2img(mmd)
+    mmd2img(mmd, output_file=args.output_file)
     logging.info("Done.")
     return 0
 
