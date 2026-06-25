@@ -3,13 +3,12 @@
 Convert [Mermaid code](https://mermaid.ai/open-source/intro/) to an image file (PNG).
 
 USAGE:  python mmd2img.py --help
-        python mmd2img.py < diagram.mmd
+        echo '...' | python mmd2img.py
         python mmd2img.py << 'EOF'
         flowchart LR
             A(["Sequence"]) --> |"BCL"| B["BCL-Convert<br/>(local)"]
             ...
         EOF
-        echo '...' | python mmd2img.py
 """
 
 import sys
@@ -36,7 +35,7 @@ def parse_args():
     Parse command-line options
     """
     parser = argparse.ArgumentParser(description="Convert Mermaid diagrams to image files (PNG)")
-    parser.add_argument('mmd', nargs='?', default='-', help="Mermaid code or '-' for stdin")
+    parser.add_argument('code', nargs='?', default='-', help="Mermaid code or '-' for STDIN")
     # parser.add_argument('-o', '--optional', help="Optional argument")
     # parser.add_argument('-f', '--flag', action="store_true", help="Optional flag")
     parser.add_argument('--logging-level', '-l', dest='level', default='info',
@@ -60,24 +59,30 @@ def configure_logging(level):
                         datefmt='%Y-%m-%d@%H:%M:%S')
 
 
-def mmd2img(mmd):
+def mmd2img(mmd:str, output_file='mmd.png') -> 0:
     """
     Exports Mermaid diagram code to PNG
+    - `mmd`  : Mermaid code. Ex.: "flowchart TD
+                                       A['start'] --> B['end']"
+    - Returns: PNG file (exit 0)
     """
+    logging.debug(f"Encode code to convert {mmd}")
     encoded = base64.urlsafe_b64encode(mmd.encode()).decode()
     url = f"https://mermaid.ink/img/{encoded}"
     img_data = requests.get(url).content
-    with open("mmd.png", "wb") as f:
+    with open(output_file, "wb") as f:
         f.write(img_data)
+    logging.debug(f"Wrote file {output_file}")
+    return 0
 
 
 def main(args):
     """
     Main function
     """
-    mmd = sys.stdin.read() if args.mmd == '-' else args.mmd
+    mmd = sys.stdin.read() if args.code == '-' else args.code
     mmd2img(mmd)
-    print("Done.")
+    logging.info("Done.")
     return 0
 
 
