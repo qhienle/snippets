@@ -5,6 +5,22 @@ Foo Template
 Template for Python developments.
 
 USAGE: foo.py --help # And the rest is handled by `argparse`
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis 
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore 
+eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
+ in culpa qui officia deserunt mollit anim id est laborum.
+
+ Options:
+
+--file, -f
+    List of samples in CSV format. Default='samples_list.csv'.
+--help
+    Display help message.
+--logging-level, -l
+    Logging level: 'debug', 'info', 'warning'. Default='info'.
 """
 
 import sys
@@ -24,8 +40,9 @@ class Class:
         """
         pass
 
+GLOBAL_VARS = {'SUCCEEDED', 'FAILED', 'FAILED_FINAL', 'ABORTED'}
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     """
     Parse command-line options
     """
@@ -34,21 +51,16 @@ def parse_args():
     parser.add_argument('-o', '--optional', help="Optional argument")
     parser.add_argument('-f', '--flag', action="store_true", help="Optional flag")
     parser.add_argument('--logging-level', '-l', dest='level', default='info',
-                        help="Logging level (str), can be 'debug', 'info', 'warning'. Default='info'")
+                        help="Logging level: 'debug', 'info', 'warning'. Default='info'")
     return parser.parse_args()
 
 
-def configure_logging(level):
+def configure_logging(level: str) -> None:
     """
     Set logging level, based on the level names of the `logging` module.
     - level (str): 'debug', 'info' or 'warning'
     """
-    if level == 'debug':
-        level_name = logging.DEBUG
-    elif level == 'info':
-        level_name = logging.INFO
-    else:
-        level_name = logging.WARNING
+    level_name = {'debug': logging.DEBUG, 'warning': logging.WARNING}.get(level, logging.INFO)
     logging.basicConfig(level=level_name, 
                         format='[%(asctime)s] %(levelname)s: %(message)s', 
                         datefmt='%Y-%m-%d@%H:%M:%S')
