@@ -77,7 +77,7 @@ def _test(arg, opt="."):
     print("\nDone.\n")
 
 
-def main(args):
+def main():
     """
     Main function
     """
