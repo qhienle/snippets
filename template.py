@@ -83,6 +83,8 @@ def main():
     """
     args = parse_args()
     configure_logging(args.level)
+    logging.info(f"Running {os.pah.abspath(__file__)} version {__version__} with settings {args}")
+    
     _test(args)
 
 
